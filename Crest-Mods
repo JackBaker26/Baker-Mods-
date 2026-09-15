@@ -1,0 +1,103 @@
+# These mods were made for the fangame Pokemon Rejuvenation. They are intended to work in conjuction with the Crest items that can be equipped to make an otherwise 
+
+PBStuff::POKEMONTOCREST[:PORYGONZ] = :PORYGONZCREST
+
+
+ModCacheInjection.hook(:items) {
+  $cache.items[:PORYGONZCREST] = ItemData.new(:PORYGONZCREST, {
+    name: "Porygon-Z Crest",
+    desc: "Porygon's type become's glitched and it's speed is boosted by 30%",
+    price: 0,
+    crest: true,
+    noUseInBattle: true,
+    noUse: true,
+  })
+}
+
+class PokeBattle_Battler
+    alias porygonzcrest_crestStats crestStats if !defined?(porygonzcrest_crestStats)
+    def crestStats
+      porygonzcrest_crestStats
+      case @crested
+        when :PORYGONZ
+            @speed *= 1.3
+            @type = :QMARKS
+            
+            
+      end
+     
+    end
+   
+end
+
+
+PBStuff::POKEMONTOCREST[:TAUROS] = :TAURCREST
+
+
+ModCacheInjection.hook(:items) {
+  $cache.items[:TAURCREST] = ItemData.new(:TAURCREST, {
+    name: "Tauros Crest",
+    desc: "Tauros' special attack becomes equal to it's attack",
+    price: 0,
+    crest: true,
+    noUseInBattle: true,
+    noUse: true,
+  })
+}
+
+class PokeBattle_Battler
+    alias taurcrest_crestStats crestStats if !defined?(taurcrest_crestStats)
+    def crestStats
+      taurcrest_crestStats
+      case @crested
+        when :TAUROS
+            @spatk = @attack
+            
+      end
+     
+    end
+   
+
+end
+
+
+
+
+PBStuff::POKEMONTOCREST[:ELECTIVIRE] = :EVIRECREST
+
+
+ModCacheInjection.hook(:items) {
+  $cache.items[:EVIRECREST] = ItemData.new(:EVIRECREST, {
+    name: "Electivire Crest",
+    desc: "Electivire's Spatk and Speed equals it's Atk. Boosts Punch attacks by 20%.",
+    price: 0,
+    crest: true,
+    noUseInBattle: true,
+    noUse: true,
+  })
+}
+
+class PokeBattle_Battler
+    alias virecrest_crestStats crestStats if !defined?(virecrest_crestStats)
+    def crestStats
+      virecrest_crestStats
+      case @crested
+        when :ELECTIVIRE
+            @speed = @attack
+            @spatk = @attack
+            
+      end
+     
+    end
+   
+
+end
+
+class PokeBattle_Move
+  alias_method :virecrest_punch, :pbBaseDamageMultiplier unless method_defined?(:virecrest_punch)
+  def pbBaseDamageMultiplier(damagemult, attacker, opponent)
+    damagemult = virecrest_punch(damagemult, attacker, opponent)
+    damagemult *= 1.2 if attacker.crested == :ELECTIVIRE && punchMove?
+    return damagemult
+  end
+end
